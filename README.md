@@ -19,8 +19,10 @@ var view = new TableView({
   table: 'people_table',
   data: [
     /* You'll probably use a variable for data, but here is an example data array */    
-    { name: "Jesse", age: 44, gender: "M"},
-    { name: "Gertrude", age: 67, gender: "F"}
+		{ name: "Jesse", age: 44, gender: "M"},
+		{ name: "Sally", age: 67, gender: "F"},
+		{ name: "Bobby", age: 6, gender: "M"},
+		{ name: "Tracy", age: 4, gender: "F"}
   ],
   columns: ['name','age','gender']
 });
@@ -91,7 +93,7 @@ The following are common methods that can be called from an external script.
 | unwatchTriggers       | _no arguments_      | Stops watching all triggers (except `data`)    |
 ## Properties
 
-The following are properties that could be used by external code, _i.e._ during `onSort` or `compareItems`
+The following are properties that could be used by external code, _e.g._ during `onSort` or `compareItems`
 
 | Name         | Default         | Description                                        |
 | -------------|-----------------|----------------------------------------------------|
