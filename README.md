@@ -1,7 +1,7 @@
 
 # table-view.js
 
-An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs at 8 kilobytes.
+An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at 8 kilobytes.
 
 With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, pivot tables, and automatic updating.
 
