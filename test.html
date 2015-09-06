@@ -1,0 +1,242 @@
+<html>
+	<head>
+		<title>table-view.js - Examples</title>
+		<script type="text/javascript" src="table-view.js"></script>
+		<style type="text/css">
+			body {
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			
+			thead td {
+				background-color: #ddd;
+			}
+			
+			tbody td {
+				background-color: #f1f1f1;
+			}
+			
+			td {
+				padding: 4px;
+			}
+			
+			h1,h2,h3 {
+				color: #4d2aba;
+			}
+			
+			h3 { margin-bottom: 4px; }
+			
+			.blue {
+				color: #002eee;
+			}
+			
+			.pink {
+				color: #cc00cc;
+			}
+			
+			.senior {
+				color: #009d00;
+			}
+			
+			.add {
+				border: solid 2px #999;
+				margin: 5px 0px;
+				padding: 8px;
+			}
+			
+			thead td.sorted {
+				background-color: #1c1c1c;
+				color: #fff;
+			}
+			
+			
+			tbody td.sorted {
+				background-color: #ccc;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<h1>table-view.js</h1>
+		<h2>Examples</h2>
+		<h3>Basic Example</h3>
+		<table id="people_table1">
+			 <colgroup>
+				  <col width="200" />
+				  <col width="50" />
+				  <col width="50" />
+			 </colgroup>
+			 <thead>
+				  <tr>
+						<td>Name</td>
+						<td>Age</td>
+						<td>Gender</td>
+				  </tr>
+			 </thead>
+			 <tbody>
+			 </tbody>
+		</table>
+		
+		<h3>Custom Formatter</h3>
+		<table id="people_table2">
+			 <colgroup>
+				  <col width="200" />
+				  <col width="50" />
+				  <col width="50" />
+			 </colgroup>
+			 <thead>
+				  <tr>
+						<td>Name</td>
+						<td>Age</td>
+						<td>Gender</td>
+				  </tr>
+			 </thead>
+			 <tbody>
+			 </tbody>
+		</table>
+		
+		<h3>Use Table Content For Data</h3>
+		<table id="people_table3">
+			 <colgroup>
+				  <col width="160" />
+				  <col width="50" />
+				  <col width="120" />
+			 </colgroup>
+			 <thead>
+				  <tr>
+						<td>Day</td>
+						<td>Temp</td>
+						<td>Date</td>
+				  </tr>
+			 </thead>
+			 <tbody>
+				  <tr>
+						<td>Tuesday</td>
+						<td>76</td>
+						<td data-column-type="Date">7/9/15</td>
+				  </tr>
+				  <tr>
+						<td>Wednesday</td>
+						<td>72</td>
+						<td data-column-type="Date">7/10/15</td>
+				  </tr>
+				  <tr>
+						<td>Thursday</td>
+						<td>75</td>
+						<td data-column-type="Date">7/11/15</td>
+				  </tr>				  
+			 </tbody>
+		</table>
+		
+		<h3>Pivot Table</h3>
+		<table id="states_table">
+			 <colgroup>
+				  <col width="50" />
+				  <col width="250" />
+			 </colgroup>
+			 <thead>
+				  <tr>
+						<td>Code</td>
+						<td>Name</td>
+				  </tr>
+			 </thead>
+			 <tbody>
+			 </tbody>
+		</table>
+		
+		<div class="add">
+			<a href="#" onclick="addPerson();return false;">Add Person</a> | 
+			<a href="#" onclick="addState();return false;">Add State</a>
+		</div>
+		
+		<script type="text/javascript">
+			var people = [
+				{ name: "Jesse", age: 44, gender: "M"},
+				{ name: "Sally", age: 67, gender: "F"},
+				{ name: "Bobby", age: 6, gender: "M"},
+				{ name: "Tracy", age: 4, gender: "F"}
+			];
+			
+			var table1 = new TableView({
+				table: 'people_table1',
+				data: people,
+				columns: ['name','age','gender'],
+				sortColumn: 'name'
+			});
+			
+			// Manually call "update" because the data hasn't changed yet.
+			table1.update();
+			
+			var table2 = new TableView({
+				table: 'people_table2',
+				data: people,
+				columns: ['name','age','gender'],
+				formatter: function(cell, column, row, index) {
+					if (column == "age") {
+						if (cell >= 65) {
+							return "<span class=\"senior\">" + cell + "</span>";
+						}
+					} else if (column == "gender") {
+						if (cell == "M") {
+							return "<span class=\"blue\">" + cell + "</span>";
+						} else if (cell == "F") {
+							return "<span class=\"pink\">" + cell + "</span>";
+						}
+					}
+					
+					// fall back to the default formatter
+					return this.formatCellHtml(cell);
+				}
+			});
+			
+			// Manually call "update" because the data hasn't changed yet.
+			table2.update();			
+
+			
+			var states = {
+				"RI": "Rhode Island",
+				"CA": "California",
+				"NY": "New York",
+				"DC": "Washington, DC"
+			};
+
+			var table3 = new TableView({
+				table: 'people_table3',
+				columns: ['day','temp','date'],
+				sortColumn: 'date',
+				formatter: function(cell, column, row, index) {
+					if (column == "date") {
+						return cell.toLocaleDateString();
+					}
+					
+					// fall back to the default formatter
+					return this.formatCellHtml(cell);
+				}				
+			});			
+			
+			var table4 = new TableView({
+				table: 'states_table',
+				data: states,
+				sortColumn: 'value'
+			});			
+			
+			table4.update();
+			
+			function addPerson() {
+				var name = "Person " + people.length;
+				people.push({
+					name: name,
+					age: 1 + Math.floor((Math.random() * 80)),
+					gender: "M"
+				});
+			}
+			
+			function addState() {
+				var number = (10 + Math.floor((Math.random() * 50)));
+				var name = "S" + number;
+				states[name] = "State #" + number;
+
+			}			
+		</script>
+	</body>
+</html>
+			 
