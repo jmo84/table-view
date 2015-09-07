@@ -15,7 +15,8 @@
 			DEFAULT_EVENTS = ["Change", "Update"],
 			OBJECT_COLUMNS = ["key", "value"],
 			ATTRIBUTE_COLUMN_KEY = "data-column-key",
-			INDEX_COLUMN_KEY = "#";
+			INDEX_COLUMN_KEY = "#",
+			HAS_OBSERVE = typeof Object.observe === "function";
 		
 		TableView = function(settings) {
 			var s = settings;
@@ -76,6 +77,11 @@
 
 			bindEvents(this, this.updateEvents, s);
 		
+			if (s.pageSize) {
+				this.pageSize = s.pageSize;
+				this.pageIndex = s.pageIndex || 0;
+			}
+			
 			if (s.sortColumn) {
 				this.sort(s.sortColumn);
 				this.update();
@@ -88,15 +94,20 @@
 			var isArray = this.dataIsArray,
 				data = isArray ? (this.dataSort || this.data) : this.keys,
 				isReversed = this.isReversed,
+				pageSize = this.pageSize || 0,
 				i, start, end, delta, row, bh = "";
 				 
 			if (isReversed) {
 				start = data.length - 1;
-				delta = -1;
 				end = 0;
+				delta = -1;
+				if (pageSize) {
+					start = Math.max(start - (this.pageIndex * pageSize), end);
+					end = Math.max((start - pageSize)+1, 0);
+				}
 			} else {
-				end = data.length;
-				start = 0;
+				end = pageSize ? Math.min((this.pageIndex + 1) * pageSize, data.length) : data.length;
+				start = pageSize ? this.pageIndex * pageSize : 0;
 				delta = 1;
 			}
 
@@ -354,13 +365,18 @@
 					this.columns = [COLUMN_TYPE_PROPERTY_NAME, COLUMN_TYPE_VALUE];
 				}
 
-				this.observeChanges = function(changes) {
-					table.processChanges(changes);
-				};
+				if (HAS_OBSERVE) {
 					
-				(getWatcher(function(o) {
-					Object.observe(o, table.observeChanges);	
-				}, !this.isRecursive))(data);
+					this.observeChanges = function(changes) {
+						table.processChanges(changes);
+					};
+				
+					(getWatcher(function(o) {
+	
+						Object.observe(o, table.observeChanges);
+	
+					}, !this.isRecursive))(data);
+				}
 			}
 			
 			this.sort(this.sortColumn);
@@ -535,28 +551,31 @@
 		TableView.prototype.watchTriggers = function(triggers) {
 			var i, tableView = this;
 			
-			this.triggers = triggers;
-			
+			if (!triggers || !HAS_OBSERVE) {
+				return;	
+			}
+
 			watchTriggerChanges = function() {
-				//console.log('watchTrigger update');
 				tableView.update();
 			};
 			
 			watchTrigger = getWatcher(function(o) {
-				if (typeof Object.observe === "function") {
-					Object.observe(o, watchTriggerChanges);
-				}
+				Object.observe(o, watchTriggerChanges);
 			}, !this.isRecursive);
 
 			for (i = 0; i < triggers.length; i++) {
 				watchTrigger(triggers[i]);
+				if (!this.triggers) {
+					this.triggers = [];
+				}
+				this.triggers.push(triggers[i]);
 			}
 		};
 		
 		TableView.prototype.unwatchTriggers = function() {
 			var i, triggers = this.triggers;
 
-			if (!watchTriggerChanges || !triggers) {
+			if (!watchTriggerChanges || !triggers || !HAS_OBSERVE) {
 				return;
 			}
 			
@@ -569,6 +588,48 @@
 			}
 			watchTriggerChanges = null;
 		};
+		
+		TableView.prototype.movePage = function(change) {
+			var delta = change || 1,
+				pages = this.getPageTotal();
+				
+			if (!this.pageSize) {
+				return;
+			}
+
+			this.viewPage(this.pageIndex + delta);
+		};
+		
+		TableView.prototype.viewPage = function(pageIndex) {
+			var pages;
+			if (!this.pageSize) {
+				return;
+			}
+			
+			pages = this.getPageTotal();
+			
+			this.pageIndex = pageIndex;
+			if (this.pageIndex < 0) {
+				this.pageIndex = 0;
+			} else if (this.pageIndex > pages - 1) {
+				this.pageIndex = Math.max(pages - 1, 0);
+			}
+			
+			this.update();			
+		};
+		
+		TableView.prototype.getPageTotal = function(change) {
+			var p = 0,
+				isArray = this.dataIsArray,
+				data = isArray ? (this.dataSort || this.data) : this.keys,
+				pageSize = this.pageSize;
+				
+			if (pageSize && data && data.length > 0) {
+				p = Math.ceil(data.length / pageSize);							
+			}
+			
+			return p;
+		};		
 		
 		handleHeaderCellPress = function(e, table) {
 			var j, columnKey,

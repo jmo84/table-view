@@ -3,7 +3,7 @@
 
 An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at 8 kilobytes.
 
-With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, pivot tables, and automatic updating.
+With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, pivot tables, paging, and automatic updating.
 
 It listens to notifications from `Object.observe` (if supported) and updates a table's contents.
 When passing an `Object` as data, it will render as a two column pivot table. With an `Array`, each element will correspond to one row in the table. The `columns` option defines how each `Array` element is used when rendering table cells.
@@ -79,6 +79,8 @@ Options should be passed to the constructor as one object with any of the follow
 | isReversed      | `false`             | Whether the table's order is reversed. Changed upon sorting. 
 | isRecursive       | `true`       | Whether the data is watched at all levels, instead of just the first level |
 | body | `0` (first)| Optional. For tables with multiple bodies, the index of the body to update. A table body instance (`HTMLTableSectionElement`) will also be accepted.
+| pageSize | _optional_ | Enables paging mode of with the given size. |
+| pageIndex | `0` | If paging mode is activated with `pageSize`, this is the page to start at.
 
 
 ## Methods
@@ -91,6 +93,11 @@ The following are common methods that can be called from an external script.
 | update       | (_optional_ `Array` eventNames)       | Updates the table. You can pass names of events to call.     |
 | watchTrigger       | (**Required** `Object` trigger)      | Adds an object to watch for changes.    |
 | unwatchTriggers       | _no arguments_      | Stops watching all triggers (except `data`)    |
+| setData       | (**Required** _mixed_ data)      | Sets the data. See documentation for the `data` option.    |
+| movePage       | (**Required** `Number` change)      | Moves the page number using the value of _change_    |
+| getPageTotal       | _no arguments_      | Gets the number of pages available based on data size.    |
+| viewPage       | (**Required** `Number` pageIndex)      | Jumps to the page at _pageIndex_. Note that page numbers are zero-based, so the first page is `0`
+
 ## Properties
 
 The following are properties that could be used by external code, _e.g._ during `onSort` or `compareItems`
@@ -101,6 +108,7 @@ The following are properties that could be used by external code, _e.g._ during 
 | isReversed       | `false`       | If the table is sorted as descending. |
 | dataSort       | _undefined_       | `Array` of data that has been sorted. Copied from `data`     |
 | dataIsArray       | _no default_       | `Boolean` of whether data is an `Array`     |
+| pageIndex       | `0`       | The current page being viewed if `pageSize` was set. Page numbers are zero-based, so the first page is `0`     |
 
 ## Examples
 ### Custom Formatter

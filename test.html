@@ -38,9 +38,14 @@
 			}
 			
 			.add {
-				border: solid 2px #999;
+				border: solid 2px #cecece;
+				background-color: #f6f6f6;
 				margin: 5px 0px;
 				padding: 8px;
+			}
+			
+			.add a:link, .add a:visited {
+				color: #3357ce;
 			}
 			
 			thead td.sorted {
@@ -48,9 +53,23 @@
 				color: #fff;
 			}
 			
-			
 			tbody td.sorted {
 				background-color: #ccc;
+			}
+			
+			#pageNumber, .slash, #pageTotal {
+				color: #1e1e1e;
+				font-size: .9em;
+				font-weight: bold;
+				margin: 0px 4px;
+			}
+			
+			.slash {
+				margin: 0px 1px;
+			}
+			
+			#pageTotal, .slash {
+				color: #7d7d7d;
 			}
 			
 		</style>
@@ -93,6 +112,10 @@
 			 <tbody>
 			 </tbody>
 		</table>
+		
+		<div class="add">
+			<a href="#" onclick="addPerson();return false;">Add Person</a>
+		</div>
 		
 		<h3>Use Table Content For Data</h3>
 		<table id="people_table3">
@@ -144,8 +167,28 @@
 		</table>
 		
 		<div class="add">
-			<a href="#" onclick="addPerson();return false;">Add Person</a> | 
 			<a href="#" onclick="addState();return false;">Add State</a>
+		</div>
+
+		<h3>Table With Paging</h3>
+		<table id="paging_table">
+			 <colgroup>
+				  <col width="50" />
+				  <col width="250" />
+			 </colgroup>
+			 <thead>
+				  <tr>
+						<td>ID</td>
+						<td>Name</td>
+				  </tr>
+			 </thead>
+			 <tbody>
+			 </tbody>
+		</table>
+		<div class="add">
+			<a href="#" onclick="movePage(-1);return false;">Previous Page</a>
+			<span id="pageNumber">1</span><span class="slash">/</span><span id="pageTotal"></span> 
+			<a href="#" onclick="movePage(1);return false;">Next Page</a>
 		</div>
 		
 		<script type="text/javascript">
@@ -221,6 +264,17 @@
 			
 			table4.update();
 			
+			var table5 = new TableView({
+				table: 'paging_table',
+				columns: ['id', 'name'],
+				data: getPagingTableData(),
+				pageSize: 8
+			});			
+			
+			table5.update();			
+			document.getElementById("pageTotal").innerText = table5.getPageTotal();
+			
+			
 			function addPerson() {
 				var name = "Person " + people.length;
 				people.push({
@@ -235,7 +289,23 @@
 				var name = "S" + number;
 				states[name] = "State #" + number;
 
-			}			
+			}
+			
+			function getPagingTableData() {
+				var data = [], i;
+				for (i = 0; i < 100; i++) {
+					data.push({
+						id: i + 1,
+						name: 'Name #' + (i + 1)
+					});
+				}
+				return data;
+			}
+			
+			function movePage(change) {
+				table5.movePage(change);
+				document.getElementById("pageNumber").innerText = (table5.pageIndex + 1);
+			}
 		</script>
 	</body>
 </html>
