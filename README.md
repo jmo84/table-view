@@ -79,7 +79,7 @@ Options should be passed to the constructor as one object with any of the follow
 | isReversed      | `false`             | Whether the table's order is reversed. Changed upon sorting. 
 | isRecursive       | `true`       | Whether the data is watched at all levels, instead of just the first level |
 | body | `0` (first)| Optional. For tables with multiple bodies, the index of the body to update. A table body instance (`HTMLTableSectionElement`) will also be accepted.
-| pageSize | _optional_ | Enables paging mode of with the given size. |
+| pageSize | _optional_ | Enables paging mode with the specified size. |
 | pageIndex | `0` | If paging mode is activated with `pageSize`, this is the page to start at.
 
 
@@ -96,7 +96,7 @@ The following are common methods that can be called from an external script.
 | setData       | (**Required** _mixed_ data)      | Sets the data. See documentation for the `data` option.    |
 | movePage       | (**Required** `Number` change)      | Moves the page number using the value of _change_    |
 | getPageTotal       | _no arguments_      | Gets the number of pages available based on data size.    |
-| viewPage       | (**Required** `Number` pageIndex)      | Jumps to the page at _pageIndex_. Note that page numbers are zero-based, so the first page is `0`
+| viewPage       | (**Required** `Number` pageIndex)      | Jumps to the page at _pageIndex_. Page numbers are zero-based, so the first page is `0`
 
 ## Properties
 
