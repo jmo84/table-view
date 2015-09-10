@@ -77,7 +77,11 @@
 		if (s.onProcess) {
 			this.onProcess = s.onProcess;
 		}
-
+		
+		if (s.onCheckChange) {
+			this.onCheckChange = s.onCheckChange;
+		}
+		
 		bindEvents(this, this.updateEvents, s);
 	
 		if (s.pageSize) {
@@ -160,14 +164,13 @@
 			} else if (column === ORDER_COLUMN_KEY) {
 				cell = (i + 1).toString();
 			} else if (column === CHECK_COLUMN_KEY) {
-				cell = this.generateCheckHtml();		
+				cell = this.generateCheckHtml(row);		
 			} else {
 				cell = row[column];
 				if (column === sortColumn) {
 					isSorted = true;
 				}
 			}
-			
 			
 			if (hasCellAttributes) {
 				cellAttributes = rowAttributes.cellAttributes[OBJECT_COLUMNS[c]];
@@ -199,22 +202,22 @@
 						
 	};
 	
-	TableView.prototype.generateAttributeHtml = function(attributesHash) {
+	TableView.prototype.generateAttributeHtml = function(attributesHash, prefix) {
 		var attributeName, value, html = '';
 		if (!!attributesHash && typeof attributesHash === 'object') {
 			for (attributeName in attributesHash) {
 				if (attributesHash.hasOwnProperty(attributeName) &&
 					attributeName !== 'cellAttributes') {
-					value = attributesHash[attributeName];
-					html += ' ' + attributeName + '="' + value + '"';
+					value = this.formatCellHtml(attributesHash[attributeName]);
+					html += ' ' + (prefix || '') + attributeName + '="' + value + '"';
 				}
 			}
 		}
 		return html;
 	};
 	
-	TableView.prototype.generateCheckHtml = function() {
-		return '<input type="checkbox" />';
+	TableView.prototype.generateCheckHtml = function(row) {
+		return '<input type="checkbox" ' + this.generateAttributeHtml(row,'data-') + '/>';
 	};
 
 	TableView.prototype.formatCellJson = function(data) {
@@ -223,14 +226,15 @@
 	};
 	
 	TableView.prototype.formatCellHtml = function(data) {
-		var text = data.toString();
-
-		return text
-		.replace(RE_AMPERSAND, "&amp;")
+		var r, text = data.toString();
+		
+		r = text.replace(RE_AMPERSAND, "&amp;")
 		.replace(RE_LESS_THAN, "&lt;")
 		.replace(RE_GREATER, "&gt;")
 		.replace(RE_QUOTE, "&quot;")
 		.replace(RE_APOSTROPHE, "&#039;");
+
+		return r;
 	};
 	
 	TableView.prototype.update = function(eventNames) {
@@ -238,6 +242,10 @@
 		
 		html = this.generateBody();
 		this.tableBody.innerHTML = html;
+		
+		if (this.onCheckChange) {
+			this.processChecks();
+		}
 		
 		if (eventNames && eventNames.length) {
 			for (i = 0; i < eventNames.length; i++) {
@@ -340,6 +348,40 @@
 		}
 		
 		this.updateHeader(sortColumn);
+	};
+	
+	TableView.prototype.processChecks = function() {
+		var i, c, row, rows, cellElement, cellChild,
+			c2, cellChildren, checkIndex,
+			self = this,
+			tbody = this.tableBody;
+			
+					
+		if (tbody && tbody.rows) {
+			rows = tbody.rows;
+			for (i = 0; i < rows.length; i++) {
+				row = rows[i];
+				for (c = 0; c < row.children.length; c++) {
+					cellElement = row.children[c];
+					cellChildren = cellElement.children;
+					checkIndex = -1;
+					for (c2 = 0; c2 < cellChildren.length; c2++) {
+						cellChild = cellChildren[c2];
+						if (cellChild instanceof HTMLInputElement) {
+							checkIndex++;
+							cellChild.setAttribute('data-check-index', checkIndex.toString());
+							cellChild.addEventListener("change", function(e) {
+								var indexChecked = parseInt(cellChild.getAttribute('data-check-index'), 10);
+								if (typeof self.onCheckChange === "function") {
+									self.onCheckChange.call(this, this.checked, indexChecked);
+								}
+								//console.log(this.checked, indexChecked);
+							});							
+						}
+					}
+				}
+			}
+		}
 	};
 	
 	TableView.prototype.releaseData = function() {

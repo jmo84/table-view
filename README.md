@@ -1,7 +1,7 @@
 
 # table-view.js
 
-An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at just under 9 kilobytes.
+An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at 8 kilobytes.
 
 With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, pivot tables, paging, and automatic updating.
 
@@ -66,6 +66,7 @@ Options should be passed to the constructor as one object with any of the follow
 | onUpdate      | _Optional_             | A `Function` that is called after the table changes. Called after sorting.                    |
 | onSort     | _Optional_             | A `Function` that is called after the table is sorted.
 | onProcess     | _Optional_             | A `Function` that is called once data changes. Return `false` to stop update. Argument passed: `Array` of changes from `Object.observe`|
+| onCheckChange    | _Optional_             | A `Function` that is called on checkbox changes. Arguments passed: checked, checkIndex|
 | columnAttributes      | _Optional_             | A dictionary of column names tied to objects that contain all of that column's cell attributes. See example below.                     |
 | rowAttributes      | _Optional_             | An object that contains all of the table rows' attributes. If a pivot table, you specify property names here. See example for pivot table.
 | exclude      | _Optional_             | `Array` of strings that are properties/columns to ignore in pivot table mode.                    |
@@ -113,7 +114,7 @@ The following are properties that could be used by external code, _e.g._ during 
 ## Interpreted Columns
 | Column | Character | Description |
 |--------|------|-------------|
-| `?` | Question | Creates a checkbox element
+| `?` | Question | Creates a checkbox element. See `onCheckChange` option.
 | `@` | At Symbol | Outputs the row index, starting at zero
 | `#` | Number Sign | Outputs the row number, starting at one
 
