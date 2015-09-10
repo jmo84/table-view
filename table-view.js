@@ -289,17 +289,20 @@
 		this.update(this.updateEvents);
 	};
 	
-	TableView.prototype.sort = function(sortColumn) {
-		var tableView, isValueSort, isKeySort, key, keys, i;
+	TableView.prototype.sort = function(sortColumn, canReverse) {
+		var tableView, isValueSort, isKeySort, key, keys, i,
+			shouldReverse = !!canReverse;
 			
 		if (!sortColumn) {
 			return;
 		}
 		
 		if (this.sortColumn != sortColumn) {
-			this.isReversed = !this.sortColumn && sortColumn == INDEX_COLUMN_KEY;				
+			if (shouldReverse) {
+				this.isReversed = !this.sortColumn && sortColumn == INDEX_COLUMN_KEY;
+			}
 			this.sortColumn = sortColumn;
-		} else {
+		} else if (shouldReverse) {
 			this.isReversed = !this.isReversed;
 		}
 
@@ -734,7 +737,7 @@
 			if (table.dataSort) {
 				delete table.dataSort;
 			}
-			table.sort(columnKey);
+			table.sort(columnKey, true);
 			table.update(["Sort","Update"]);							
 		}
 		
