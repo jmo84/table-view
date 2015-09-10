@@ -1,14 +1,14 @@
 
 # table-view.js
 
-An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at 8 kilobytes.
+An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at 9 kilobytes.
 
 With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, pivot tables, paging, and automatic updating.
 
 It listens to notifications from `Object.observe` (if supported) and updates a table's contents.
 When passing an `Object` as data, it will render as a two column pivot table. With an `Array`, each element will correspond to one row in the table. The `columns` option defines how each `Array` element is used when rendering table cells.
 
-There are no dependencies, but if you want `Object.observe` to work in older browsers, include the `Object.objserve` polyfill before calling `TableView`. The sorting code checks to see if `classList` is supported for styling sorted column headers. A polyfill for `classList` is available for browsers that don't support it.
+There are no dependencies, but if you want `Object.observe` to work in non-compliant browsers, load the `Object.objserve` polyfill before loading the TableView script. The sorting code checks to see if `classList` is supported for styling sorted column headers. A polyfill for `classList` is available for browsers that don't support it.
 
 ## Usage
 

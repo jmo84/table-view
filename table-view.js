@@ -135,7 +135,7 @@
 			sortColumn = this.sortColumn, isSorted,
 			columnAttributes = this.columnAttributes,
 			rowAttributes = this.rowAttributes,
-			hasCellAttributes,
+			hasCellAttributes, specialColumn,
 			cellAttributes,
 			columns = this.columns,
 			columnTotal = columns ? columns.length : 0,
@@ -154,6 +154,7 @@
 		
 		for (c = 0; c < columnTotal; c++) {
 			column = columns[c];
+			specialColumn = false;
 			
 			if (column === COLUMN_TYPE_VALUE) {
 				cell = row[propertyName];
@@ -161,10 +162,13 @@
 				cell = propertyName;
 			} else if (column === INDEX_COLUMN_KEY) {
 				cell = i.toString();
+				specialColumn = true;
 			} else if (column === ORDER_COLUMN_KEY) {
 				cell = (i + 1).toString();
+				specialColumn = true;
 			} else if (column === CHECK_COLUMN_KEY) {
-				cell = this.generateCheckHtml(row);		
+				cell = this.generateCheckHtml(row);
+				specialColumn = true;
 			} else {
 				cell = row[column];
 				if (column === sortColumn) {
@@ -195,7 +199,7 @@
 			}
 			
 			rh += "<td" + this.generateAttributeHtml(cellAttributes) + ">";
-			rh += (formatter ? formatter.call(this, cell, column, row, i) : cell) + "</td>";
+			rh += (formatter && !specialColumn ? formatter.call(this, cell, column, row, i) : cell) + "</td>";
 		}
 		
 		return rh + "</tr>";
