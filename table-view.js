@@ -354,11 +354,12 @@
 		this.updateHeader(sortColumn);
 	};
 	
-	TableView.prototype.processChecks = function() {
+	TableView.prototype.processChecks = function(allChecks) {
 		var i, c, row, rows, cellElement, cellChild,
 			c2, cellChildren, checkIndex,
 			self = this,
-			tbody = this.tableBody;
+			tbody = this.tableBody,
+			queryResults = null;
 			
 					
 		if (tbody && tbody.rows) {
@@ -371,21 +372,43 @@
 					checkIndex = -1;
 					for (c2 = 0; c2 < cellChildren.length; c2++) {
 						cellChild = cellChildren[c2];
-						if (cellChild instanceof HTMLInputElement) {
-							checkIndex++;
+						if (!(cellChild instanceof HTMLInputElement)) {
+							continue;
+						}
+						
+						if (!cellChild.type || cellChild.type.toLowerCase() !== "checkbox") {
+							continue;
+						}
+						
+						checkIndex++;
+						
+						if (cellChild.getAttribute('data-check-index')) {
+							if (cellChild.checked || allChecks) {
+								if (!queryResults) {
+									queryResults = [];
+								}
+								
+								queryResults.push(cellChild);
+							}
+						} else {
 							cellChild.setAttribute('data-check-index', checkIndex.toString());
 							cellChild.addEventListener("change", function(e) {
 								var indexChecked = parseInt(cellChild.getAttribute('data-check-index'), 10);
 								if (typeof self.onCheckChange === "function") {
 									self.onCheckChange.call(this, this.checked, indexChecked);
 								}
-								//console.log(this.checked, indexChecked);
 							});							
 						}
 					}
 				}
 			}
 		}
+		
+		return queryResults;
+	};
+	
+	TableView.prototype.getChecks = function() {
+		return this.processChecks() || [];
 	};
 	
 	TableView.prototype.releaseData = function() {

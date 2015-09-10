@@ -98,6 +98,8 @@ The following are common methods that can be called from an external script.
 | movePage       | (**Required** `Number` change)      | Moves the page number using the value of _change_    |
 | getPageTotal       | _no arguments_      | Gets the number of pages available based on data size.    |
 | viewPage       | (**Required** `Number` pageIndex)      | Jumps to the page at _pageIndex_. Page numbers are zero-based, so the first page is `0`
+| processChecks       | (_optional_ `Boolean` allChecks = `false`)      | Gets an `Array` of checked checkboxes or all checkboxes if _allChecks_ is `true`. Will return `null` if no matches exist in the table.
+| getChecks       | _no arguments_     | Gets an `Array` of checked checkboxes. Will return an empty array if no checkboxes are checked.
 
 ## Properties
 
