@@ -4,7 +4,7 @@
 
 	var TableView, errorList, raiseError, getKeys, bindEvents, stopEvent,
 		watchTrigger, watchTriggerChanges, getWatcher, unwatchTrigger,
-		defaultSort, handleHeaderCellPress,
+		defaultSort, getHighest, handleHeaderCellPress, 
 		COLUMN_TYPE_PROPERTY_NAME = 1,
 		COLUMN_TYPE_VALUE = 2,
 		DEFAULT_EVENTS = ["Change", "Update"],
@@ -13,6 +13,8 @@
 		INDEX_COLUMN_KEY = "@",
 		ORDER_COLUMN_KEY = "#",
 		CHECK_COLUMN_KEY = "?",
+		HIGH_COLUMN_KEY = ">",
+		LOW_COLUMN_KEY = "<",
 		HAS_OBSERVE = typeof Object.observe === "function",
 		RE_AMPERSAND = /&/g,
 		RE_LESS_THAN = /</g,
@@ -169,6 +171,10 @@
 			} else if (column === CHECK_COLUMN_KEY) {
 				cell = this.generateCheckHtml(row);
 				specialColumn = true;
+			} else if (column === HIGH_COLUMN_KEY) {
+				cell = getHighest(row);
+			} else if (column === LOW_COLUMN_KEY) {
+				cell = getHighest(row, false);
 			} else {
 				cell = row[column];
 				if (column === sortColumn) {
@@ -792,6 +798,31 @@
 		keys.sort();
 		
 		return keys;
+	};
+	
+	getHighest = function(data, lowest) {
+		var key, v, r;
+		
+		for (key in data) {
+			if (data.hasOwnProperty(key)) {
+				v = data[key];
+				if (typeof r === "undefined") {
+					r = v;
+				} else if (typeof r==="string") {
+					
+				} else if (lowest) {
+					if (v < r) {
+						r = v;
+					}
+				} else {
+					if (v > r) {
+						r = v;
+					}
+				}
+ 			}
+		}
+		
+		return r;
 	};
 	
 	raiseError = function(errorName) {

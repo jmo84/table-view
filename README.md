@@ -114,11 +114,13 @@ The following are properties that could be used by external code, _e.g._ during 
 | pageIndex       | `0`       | The current page being viewed if `pageSize` was set. Page numbers are zero-based, so the first page is `0`     |
 
 ## Interpreted Columns
-| Column | Character | Description |
-|--------|------|-------------|
-| `?` | Question | Creates a checkbox element. See `onCheckChange` option.
-| `@` | At Symbol | Outputs the row index, starting at zero
-| `#` | Number Sign | Outputs the row number, starting at one
+| Column | Description |
+|--------|-------------|
+| `?` | Creates a checkbox element. See `onCheckChange` option.
+| `@` | Outputs the row index, starting at zero
+| `#` | Outputs the row number, starting at one
+| `>` | Outputs the highest value in the row (`Number` or `Date`)
+| `<` |  Outputs the lowest value in the row (`Number` or `Date`)
 
 ## Examples
 ### Custom Formatter
