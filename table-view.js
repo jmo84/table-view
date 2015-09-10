@@ -104,12 +104,13 @@
 	TableView.prototype.updateEvents = DEFAULT_EVENTS;
 
 	TableView.prototype.generateBody = function() {
+		
 		var isArray = this.dataIsArray,
 			data = isArray ? (this.dataSort || this.data) : this.keys,
 			isReversed = this.isReversed,
 			pageSize = this.pageSize || 0,
 			i, start, end, delta, row, bh = "";
-			 
+
 		if (isReversed) {
 			start = data.length - 1;
 			end = 0;
@@ -146,8 +147,7 @@
 			columns = this.columns,
 			columnTotal = columns ? columns.length : 0,
 			formatter = this.cellFormatter;
-
-			
+		
 		if (propertyName && rowAttributes) {
 			if (rowAttributes[propertyName]) {
 				rowAttributes = rowAttributes ? rowAttributes[propertyName] : null;
@@ -157,7 +157,6 @@
 
 		rh = "<tr" + this.generateAttributeHtml(rowAttributes) + ">";				
 					
-		
 		for (c = 0; c < columnTotal; c++) {
 			column = columns[c];
 			specialColumn = false;
@@ -242,7 +241,7 @@
 	TableView.prototype.formatCellHtml = function(data) {
 		var r, text, type = typeof data;
 		
-		if (type === "undefined" || type === "null") {
+		if (type === "undefined" || data === null) {
 			text = this.defaultText || "";	
 		} else {
 			text = data.toString();
@@ -259,7 +258,7 @@
 	
 	TableView.prototype.update = function(eventNames) {
 		var html, i, eventName, eventHandler;
-		
+
 		html = this.generateBody();
 		this.tableBody.innerHTML = html;
 		
@@ -431,10 +430,9 @@
 	};
 	
 	TableView.prototype.releaseData = function() {
-		var oldData;
+		var oldData = this.data;
 		
-		if (this.data) {
-			oldData = this.data;
+		if (oldData) {
 			delete this.data;
 			delete this.dataIsArray;
 			if (this.observeChanges) {
