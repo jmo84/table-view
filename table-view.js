@@ -50,6 +50,10 @@
 			this.exclude = s.exclude;
 		}
 		
+		if (s.defaultText) {
+			this.defaultText = s.defaultText;
+		}
+		
 		this.sortClass = s.sortClass || "sorted";
 		this.sortClassAscending = s.sortClassAscending || "sorted-asc";
 		this.sortClassDescending = s.sortClassDescending || "sorted-desc";
@@ -236,7 +240,13 @@
 	};
 	
 	TableView.prototype.formatCellHtml = function(data) {
-		var r, text = data.toString();
+		var r, text, type = typeof data;
+		
+		if (type === "undefined" || type === "null") {
+			text = this.defaultText || "";	
+		} else {
+			text = data.toString();
+		}
 		
 		r = text.replace(RE_AMPERSAND, "&amp;")
 		.replace(RE_LESS_THAN, "&lt;")
