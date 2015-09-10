@@ -8,7 +8,7 @@ With search engine visibility in mind, the table can be initialized from its bod
 It listens to notifications from `Object.observe` (if supported) and updates a table's contents.
 When passing an `Object` as data, it will render as a two column pivot table. With an `Array`, each element will correspond to one row in the table. The `columns` option defines how each `Array` element is used when rendering table cells.
 
-There are no dependencies, but if you want `Object.observe` to work in non-compliant browsers, load the `Object.objserve` polyfill before loading the TableView script. The sorting code checks to see if `classList` is supported for styling sorted column headers. A polyfill for `classList` is available for browsers that don't support it.
+There are no dependencies, but if you want `Object.observe` to work in non-compliant browsers, load the `Object.observe` polyfill before loading the TableView script. The sorting code checks to see if `classList` is supported for styling sorted column headers. A polyfill for `classList` is available for browsers that don't support it.
 
 ## Usage
 
