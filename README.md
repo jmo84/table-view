@@ -1,7 +1,7 @@
 
 # table-view.js
 
-An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at 8 kilobytes.
+An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script weighs in at just under 9 kilobytes.
 
 With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, pivot tables, paging, and automatic updating.
 
@@ -109,6 +109,13 @@ The following are properties that could be used by external code, _e.g._ during 
 | dataSort       | _undefined_       | `Array` of data that has been sorted. Copied from `data`     |
 | dataIsArray       | _no default_       | `Boolean` of whether data is an `Array`     |
 | pageIndex       | `0`       | The current page being viewed if `pageSize` was set. Page numbers are zero-based, so the first page is `0`     |
+
+## Interpreted Columns
+| Column | Character | Description |
+|--------|------|-------------|
+| `?` | Question | Creates a checkbox element
+| `@` | At Symbol | Outputs the row index, starting at zero
+| `#` | Number Sign | Outputs the row number, starting at one
 
 ## Examples
 ### Custom Formatter

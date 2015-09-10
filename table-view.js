@@ -10,7 +10,9 @@
 		DEFAULT_EVENTS = ["Change", "Update"],
 		OBJECT_COLUMNS = ["key", "value"],
 		ATTRIBUTE_COLUMN_KEY = "data-column-key",
-		INDEX_COLUMN_KEY = "#",
+		INDEX_COLUMN_KEY = "@",
+		ORDER_COLUMN_KEY = "#",
+		CHECK_COLUMN_KEY = "?",
 		HAS_OBSERVE = typeof Object.observe === "function",
 		RE_AMPERSAND = /&/g,
 		RE_LESS_THAN = /</g,
@@ -155,6 +157,10 @@
 				cell = propertyName;
 			} else if (column === INDEX_COLUMN_KEY) {
 				cell = i.toString();
+			} else if (column === ORDER_COLUMN_KEY) {
+				cell = (i + 1).toString();
+			} else if (column === CHECK_COLUMN_KEY) {
+				cell = this.generateCheckHtml();		
 			} else {
 				cell = row[column];
 				if (column === sortColumn) {
@@ -205,6 +211,10 @@
 			}
 		}
 		return html;
+	};
+	
+	TableView.prototype.generateCheckHtml = function() {
+		return '<input type="checkbox" />';
 	};
 
 	TableView.prototype.formatCellJson = function(data) {
