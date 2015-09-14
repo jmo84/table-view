@@ -4,7 +4,7 @@
 
 	var TableView, errorList, raiseError, getKeys, bindEvents, stopEvent,
 		watchTrigger, watchTriggerChanges, getWatcher, unwatchTrigger,
-		defaultSort, getHighest, handleHeaderCellPress, 
+		defaultSort, computeRowValue, handleHeaderCellPress, 
 		COLUMN_TYPE_PROPERTY_NAME = 1,
 		COLUMN_TYPE_VALUE = 2,
 		DEFAULT_EVENTS = ["Change", "Update"],
@@ -97,7 +97,7 @@
 		
 		if (s.sortColumn) {
 			this.sort(s.sortColumn);
-			this.update();
+			this.update(null);
 		}		
 	};
 	
@@ -120,7 +120,7 @@
 				end = Math.max((start - pageSize)+1, 0);
 			}
 		} else {
-			end = pageSize ? Math.min((this.pageIndex + 1) * pageSize, data.length) : data.length;
+			end = pageSize ? Math.min((this.pageIndex + 1) * pageSize, data.length) : (!data ? 0 : data.length)
 			start = pageSize ? this.pageIndex * pageSize : 0;
 			delta = 1;
 		}
@@ -143,7 +143,7 @@
 			columnAttributes = this.columnAttributes,
 			rowAttributes = this.rowAttributes,
 			hasCellAttributes, specialColumn,
-			cellAttributes,
+			cellAttributes, columnName,
 			columns = this.columns,
 			columnTotal = columns ? columns.length : 0,
 			formatter = this.cellFormatter;
@@ -160,11 +160,14 @@
 		for (c = 0; c < columnTotal; c++) {
 			column = columns[c];
 			specialColumn = false;
+			columnName = column;
 			
 			if (column === COLUMN_TYPE_VALUE) {
 				cell = row[propertyName];
+				columnName = propertyName;
 			} else if (column === COLUMN_TYPE_PROPERTY_NAME) {
 				cell = propertyName;
+				columnName = null;
 			} else if (column === INDEX_COLUMN_KEY) {
 				cell = i.toString();
 				specialColumn = true;
@@ -175,9 +178,9 @@
 				cell = this.generateCheckHtml(row);
 				specialColumn = true;
 			} else if (column === HIGH_COLUMN_KEY) {
-				cell = getHighest(row);
+				cell = computeRowValue(row);
 			} else if (column === LOW_COLUMN_KEY) {
-				cell = getHighest(row, false);
+				cell = computeRowValue(row, "LOW");
 			} else {
 				cell = row[column];
 				if (column === sortColumn) {
@@ -208,7 +211,7 @@
 			}
 			
 			rh += "<td" + this.generateAttributeHtml(cellAttributes) + ">";
-			rh += (formatter && !specialColumn ? formatter.call(this, cell, column, row, i) : cell) + "</td>";
+			rh += (formatter && !specialColumn ? formatter.call(this, cell, columnName, row, i) : cell) + "</td>";
 		}
 		
 		return rh + "</tr>";
@@ -257,7 +260,8 @@
 	};
 	
 	TableView.prototype.update = function(eventNames) {
-		var html, i, eventName, eventHandler;
+		var html, i, eventName, eventHandler,
+		events = eventNames !== null ? ["Update"] : eventNames;
 
 		html = this.generateBody();
 		this.tableBody.innerHTML = html;
@@ -266,9 +270,9 @@
 			this.processChecks();
 		}
 		
-		if (eventNames && eventNames.length) {
-			for (i = 0; i < eventNames.length; i++) {
-				eventName = "on" + eventNames[i];
+		if (events && events.length) {
+			for (i = 0; i < events.length; i++) {
+				eventName = "on" + events[i];
 				eventHandler = this[eventName];
 				if (typeof eventHandler === "function") {
 					eventHandler.call(this);
@@ -530,7 +534,7 @@
 			this.table = table;
 		}
 		
-		if (!this.table instanceof HTMLTableElement) {
+		if (this.table === null || !(this.table instanceof HTMLTableElement)) {
 			raiseError("invalidTable");
 		} else {
 			if (body instanceof HTMLTableSectionElement) {
@@ -811,24 +815,24 @@
 		return keys;
 	};
 	
-	getHighest = function(data, lowest) {
-		var key, v, r;
+	computeRowValue = function(data, computationType) {
+		var key, v, r,
+			computation = computationType || "TOP";
+			
 		
 		for (key in data) {
 			if (data.hasOwnProperty(key)) {
 				v = data[key];
 				if (typeof r === "undefined") {
 					r = v;
-				} else if (typeof r==="string") {
-					
-				} else if (lowest) {
+				} else if (!(v instanceof Date) || v === null || isNaN(v)) {
+					//ignore
+				} else if (computation === "LOW") {
 					if (v < r) {
 						r = v;
 					}
-				} else {
-					if (v > r) {
-						r = v;
-					}
+				} else if (v > r) {
+					r = v;
 				}
  			}
 		}
