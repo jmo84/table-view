@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>table-view.js - Examples</title>
-		<script type="text/javascript" src="table-view.js"></script>
+		<script type="text/javascript" src="../table-view.js"></script>
 		<style type="text/css">
 			body {
 				font-family: Arial, Helvetica, sans-serif;
@@ -23,7 +23,12 @@
 				color: #4d2aba;
 			}
 			
-			h3 { margin-bottom: 4px; }
+			h1, h2, h3 {
+				margin: 10px 0px 2px 0px;
+			}
+			
+			h1 { font-size: 1.75em; }
+			h3 { font-size: 1.25em; }
 			
 			.blue {
 				color: #002eee;
@@ -75,8 +80,7 @@
 		</style>
 	</head>
 	<body>
-		<h1>table-view.js</h1>
-		<h2>Examples</h2>
+		<h1>table-view examples</h1>
 		<h3>Basic Example</h3>
 		<table id="people_table1">
 			 <colgroup>
@@ -113,12 +117,30 @@
 			 </tbody>
 		</table>
 		
+		<h3>Link Formatting</h3>
+		<table id="people_table3">
+			 <colgroup>
+				  <col width="200" />
+				  <col width="50" />
+				  <col width="50" />
+			 </colgroup>
+			 <thead>
+				  <tr>
+						<td>Name</td>
+						<td>Age</td>
+						<td>Gender</td>
+				  </tr>
+			 </thead>
+			 <tbody>
+			 </tbody>
+		</table>
+		
 		<div class="add">
 			<a href="#" onclick="addPerson();return false;">Add Person</a>
 		</div>
 		
 		<h3>Use Table Content For Data</h3>
-		<table id="people_table3">
+		<table id="weather_table">
 			 <colgroup>
 				  <col width="160" />
 				  <col width="50" />
@@ -234,6 +256,23 @@
 			// Manually call "update" because the data hasn't changed yet.
 			table2.update();			
 
+			var linkTable = new TableView({
+				table: 'people_table3',
+				data: people,
+				columns: ['name','age','gender'],
+				linkSettings: {
+					"name": {
+						url: '#hello-{name}',
+						text: 'View {name}',
+						attributes: {
+							"data-example": "{name}"
+						}
+					}
+				}
+			});
+			
+			linkTable.update();
+			
 			
 			var states = {
 				"RI": "Rhode Island",
@@ -243,7 +282,7 @@
 			};
 
 			var table3 = new TableView({
-				table: 'people_table3',
+				table: 'weather_table',
 				columns: ['day','temp','date'],
 				sortColumn: 'date',
 				formatter: function(cell, column, row, index) {

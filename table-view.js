@@ -4,7 +4,8 @@
 
 	var TableView, errorList, raiseError, getKeys, bindEvents, stopEvent,
 		watchTrigger, watchTriggerChanges, getWatcher, unwatchTrigger,
-		defaultSort, computeRowValue, handleHeaderCellPress, 
+		defaultSort, computeRowValue, handleHeaderCellPress,
+		standardLinkFormatter, columnLinkSettings,
 		COLUMN_TYPE_PROPERTY_NAME = 1,
 		COLUMN_TYPE_VALUE = 2,
 		DEFAULT_EVENTS = ["Change", "Update"],
@@ -41,6 +42,10 @@
 		if (s.rowAttributes) {
 			this.rowAttributes = s.rowAttributes;
 		}
+		
+		if (s.linkSettings) {
+			this.linkSettings = s.linkSettings;
+		}		
 		
 		if (s.table) {
 			this.setTable(s.table, s.body || 0);
@@ -146,7 +151,8 @@
 			cellAttributes, columnName,
 			columns = this.columns,
 			columnTotal = columns ? columns.length : 0,
-			formatter = this.cellFormatter;
+			formatter = this.cellFormatter,
+			linkSettings = this.linkSettings;
 		
 		if (propertyName && rowAttributes) {
 			if (rowAttributes[propertyName]) {
@@ -210,8 +216,21 @@
 				isSorted = false;
 			}
 			
+			if (linkSettings) {
+				columnLinkSettings = linkSettings[column];
+				if (!!columnLinkSettings) {
+					formatter = standardLinkFormatter;
+					specialColumn = false;
+				}
+			}
+			
 			rh += "<td" + this.generateAttributeHtml(cellAttributes) + ">";
 			rh += (formatter && !specialColumn ? formatter.call(this, cell, columnName, row, i) : cell) + "</td>";
+
+			if (columnLinkSettings) {
+				formatter = this.cellFormatter;
+				columnLinkSettings = null;
+			}
 		}
 		
 		return rh + "</tr>";
@@ -756,6 +775,46 @@
 		return stopEvent(e);			
 	};
 	
+	standardLinkFormatter = function(cell, column, row, index) {
+		var html, i, a, key, token, tokenValue, untokenize,
+			tableView = this,
+			attributes = columnLinkSettings.attributes,
+			linkText, attributeName, attributeValue,
+			attributeText, attributeValues, attributeKeys,
+			url = columnLinkSettings.url || '#',
+			keys = getKeys(row, null, true);
+		
+		untokenize = function(text) {
+			for (i = 0; i < keys.length; i++) {
+				key = keys[i];
+				token = '{' + key + '}';
+				tokenValue = tableView.formatCellHtml(row[key]);
+				text = text.replace(token, tokenValue);
+			}
+			return text;
+		};
+		
+		linkText = untokenize(columnLinkSettings.text || cell.toString());
+		url = untokenize(url);
+		
+		if (attributes) {
+			attributeKeys = getKeys(attributes, null, true);
+			attributeValues = {};
+			for (a = 0; a < attributeKeys.length; a++) {
+				attributeName = attributeKeys[a];
+				attributeValue = attributes[attributeName];
+				attributeValues[attributeName] = untokenize(attributeValue);
+				
+			}			
+		}
+		
+		html = '<a href="' + url + '"';
+		if (attributes) {
+			html += this.generateAttributeHtml(attributeValues);
+		}
+		return html + '>' + linkText + '</a>';
+	};
+	
 	defaultSort	= function(v1, v2, sortColumn) {
 
 		var data1, data2;
@@ -801,16 +860,18 @@
 		}
 	};
 	
-	getKeys = function(data, exclude) {
+	getKeys = function(data, exclude, noSort) {
 		var key, keys = [];
 		
 		for (key in data) {
-			if (data.hasOwnProperty(key) && exclude.indexOf(key) < 0) {
+			if (data.hasOwnProperty(key) && (!exclude || exclude.indexOf(key) < 0)) {
 				keys.push(key);	
 			}
 		}
 		
-		keys.sort();
+		if (!noSort) {
+			keys.sort();
+		}
 		
 		return keys;
 	};

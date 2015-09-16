@@ -1,9 +1,9 @@
 
 # table-view.js
 
-An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, the script is only 10 kilobytes.
+An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, this feature-packed script is only 10 kilobytes.
 
-With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, pivot tables, paging, and automatic updating.
+With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, dynamic link generation, pivot view, paging, and automatic updating.
 
 It listens to notifications from `Object.observe` (if supported) and updates a table's contents.
 When passing an `Object` as data, it will render as a two column pivot table. With an `Array`, each element will correspond to one row in the table. The `columns` option defines how each `Array` element is used when rendering table cells.
@@ -69,6 +69,7 @@ Options should be passed to the constructor as one object with any of the follow
 | onCheckChange    | _Optional_             | A `Function` that is called on checkbox changes. Arguments passed: checked, checkIndex|
 | columnAttributes      | _Optional_             | A dictionary of column names tied to objects that contain all of that column's cell attributes. See example below.                     |
 | rowAttributes      | _Optional_             | An object that contains all of the table rows' attributes. If a pivot table, you specify property names here. See example for pivot table.
+| linkSettings | _Optional_ | Like column attributes, but will generate a link using data of the table cell. |
 | exclude      | _Optional_             | `Array` of strings that are properties/columns to ignore in pivot table mode.                    |
 | formatter      | formatCellHtml             | A `Function` that returns a string with a cell's HTML markup. Arguments passed: cell, column, row, index                    |
 | compareItems      | defaultSort             | A `Function` that overrides the sorting function. Arguments passed: object1, object2 |
@@ -227,6 +228,26 @@ new TableView({
 });
 ```
 
+### Dynamic Links
+```javascript
+
+	var linkTable = new TableView({
+		table: 'people_table3',
+		data: people,
+		columns: ['name','age','gender'],
+		linkSettings: {
+			"name": {
+				url: '#hello-{name}',
+				text: 'View {name}',
+				attributes: {
+					"data-example": "{name}"
+				}
+			}
+		}
+	});
+	
+	linkTable.update();
+```
 ### Pivot Table
 
 ```javascript
