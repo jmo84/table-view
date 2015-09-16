@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>table-view.js - Examples</title>
-		<script type="text/javascript" src="../table-view.js"></script>
+		<script type="text/javascript" src="table-view.js"></script>
 		<style type="text/css">
 			body {
 				font-family: Arial, Helvetica, sans-serif;
@@ -30,11 +30,13 @@
 			h1 { font-size: 1.75em; }
 			h3 { font-size: 1.25em; }
 			
-			.blue {
+			.blue,
+			.gender-M {
 				color: #002eee;
 			}
 			
-			.pink {
+			.pink,
+			.gender-F {
 				color: #cc00cc;
 			}
 			
@@ -265,7 +267,8 @@
 						url: '#hello-{name}',
 						text: 'View {name}',
 						attributes: {
-							"data-example": "{name}"
+							"data-example": "{name}",
+							"class": "gender-{gender}"
 						}
 					}
 				}
