@@ -815,6 +815,14 @@
 		return html + '>' + linkText + '</a>';
 	};
 	
+	TableView.prototype.formatLink = function(cell, row, options) {
+		var html, linkSettings = columnLinkSettings;
+		columnLinkSettings = options;
+		html = standardLinkFormatter.call(this, cell, null, row);
+		columnLinkSettings = linkSettings;
+		return html;
+	};
+	
 	defaultSort	= function(v1, v2, sortColumn) {
 
 		var data1, data2;

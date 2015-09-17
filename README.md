@@ -102,6 +102,9 @@ The following are common methods that can be called from an external script.
 | viewPage       | (**Required** `Number` pageIndex)      | Jumps to the page at _pageIndex_. Page numbers are zero-based, so the first page is `0`
 | processChecks       | (_optional_ `Boolean` allChecks = `false`)      | Gets an `Array` of checked checkboxes or all checkboxes if _allChecks_ is `true`. Will return `null` if no matches exist in the table.
 | getChecks       | _no arguments_     | Gets an `Array` of checked checkboxes. Will return an empty array if no checkboxes are checked.
+| formatCellHtml       | cell,column,row,index     | Returns HTML for a cell's data |
+| formatLink       | cell,row,linkOptions     | Returns HTML for a link cell. Options are what is defined in link settings, but without a column name. |
+
 
 ## Properties
 
@@ -299,9 +302,9 @@ rowAttributes: {
 
 ## License
 
-The MIT License (MIT)
-
 Copyright (c) 2015 Jesse Oliveira
+
+The MIT License (MIT)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
