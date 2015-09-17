@@ -3,7 +3,7 @@
 
 An automatic table updater written in standard JavaScript. Designed to be a compact solution for mobile devices. In its compressed form, this feature-packed script is only 10 kilobytes.
 
-With search engine visibility in mind, the table can be initialized from its body's HTML. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, dynamic link generation, pivot view, paging, and automatic updating.
+With search engine visibility in mind, the table can be initialized from its body's existing content. There's also an option for initializing it using a data variable; you may use an `Array` or `Object` as a data source. There's column sorting and styling, cell customization, dynamic link generation, pivot view, paging, and automatic updating.
 
 It listens to notifications from `Object.observe` (if supported) and updates a table's contents.
 When passing an `Object` as data, it will render as a two column pivot table. With an `Array`, each element will correspond to one row in the table. The `columns` option defines how each `Array` element is used when rendering table cells.
@@ -231,22 +231,24 @@ new TableView({
 ### Dynamic Links
 ```javascript
 
-	var linkTable = new TableView({
-		table: 'people_table3',
-		data: people,
-		columns: ['name','age','gender'],
-		linkSettings: {
-			"name": {
-				url: '#hello-{name}',
-				text: 'View {name}',
-				attributes: {
-					"data-example": "{name}"
-				}
+var linkTable = new TableView({
+	table: 'people_table3',
+	data: people,
+	columns: ['name','age','gender'],
+	linkSettings: {
+		"name": {
+			url: '#hello-{name}',
+			text: 'View {name}',
+			attributes: {
+				"data-example": "{name}",
+				"data-age": "{age}",
+				"class": "gender-{gender}"
 			}
 		}
-	});
-	
-	linkTable.update();
+	}
+});
+
+linkTable.update();
 ```
 ### Pivot Table
 
