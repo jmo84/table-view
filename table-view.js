@@ -423,15 +423,7 @@
 						
 						checkIndex++;
 						
-						if (cellChild.getAttribute('data-check-index')) {
-							if (cellChild.checked || allChecks) {
-								if (!queryResults) {
-									queryResults = [];
-								}
-								
-								queryResults.push(cellChild);
-							}
-						} else {
+						if (!cellChild.getAttribute('data-check-index')) {
 							cellChild.setAttribute('data-check-index', checkIndex.toString());
 							cellChild.addEventListener("change", function(e) {
 								var indexChecked = parseInt(cellChild.getAttribute('data-check-index'), 10);
@@ -440,6 +432,14 @@
 								}
 							});							
 						}
+						
+						if (cellChild.checked || allChecks) {
+							if (!queryResults) {
+								queryResults = [];
+							}
+							queryResults.push(cellChild);
+						}
+							
 					}
 				}
 			}
